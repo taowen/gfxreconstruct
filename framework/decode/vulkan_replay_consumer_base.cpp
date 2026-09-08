@@ -1682,8 +1682,10 @@ void VulkanReplayConsumerBase::CheckResult(const char*                func_name,
 
         if (!accept_return_code)
         {
-            if (replay < 0 && replay != VK_ERROR_FORMAT_NOT_SUPPORTED)
+            if ((replay < 0 && replay != VK_ERROR_FORMAT_NOT_SUPPORTED) ||
+                (options_.preserve_pipeline_compile_flags && replay == VK_PIPELINE_COMPILE_REQUIRED))
             {
+                // A strict replay cannot use pipelines missing because compilation was required.
                 // Raise a fatal error if replay produced an error that did not occur during capture.  Format not
                 // supported errors are not treated as fatal, but will be reported as warnings below, allowing the
                 // replay to attempt to continue for the case where an application may have queried for formats that it
@@ -13285,6 +13287,13 @@ bool VulkanReplayConsumerBase::SkipPipelineCreationForCompileRequired(VkResult  
 template <typename T>
 void VulkanReplayConsumerBase::RemoveFailOnCompileRequiredFlags(T* create_infos, uint32_t create_info_count)
 {
+    // Strict diagnostic replay forwards the captured compile-control flag.
+    // Any resulting VK_PIPELINE_COMPILE_REQUIRED remains a replay result mismatch.
+    if (options_.preserve_pipeline_compile_flags)
+    {
+        return;
+    }
+
     static_assert(std::is_same_v<T, VkGraphicsPipelineCreateInfo> || std::is_same_v<T, VkComputePipelineCreateInfo> ||
                       std::is_same_v<T, VkRayTracingPipelineCreateInfoKHR> ||
                       std::is_same_v<T, VkRayTracingPipelineCreateInfoNV>,

@@ -79,6 +79,7 @@ const char kSkipFailedAllocationShortOption[]  = "--sfa";
 const char kSkipFailedAllocationLongOption[]   = "--skip-failed-allocations";
 const char kOmitPipelineCacheDataShortOption[] = "--opcd";
 const char kOmitPipelineCacheDataLongOption[]  = "--omit-pipeline-cache-data";
+const char kPreservePipelineCompileFlagsOption[] = "--preserve-pipeline-compile-flags";
 const char kSurfaceIndexArgument[]             = "--surface-index";
 const char kMemoryPortabilityShortOption[]     = "-m";
 const char kMemoryPortabilityLongOption[]      = "--memory-translation";
@@ -286,6 +287,8 @@ GetVulkanReplayOptions(const gfxrecon::util::ArgumentParser&           arg_parse
     {
         replay_options.omit_pipeline_cache_data = true;
     }
+
+    replay_options.preserve_pipeline_compile_flags = arg_parser.IsOptionSet(kPreservePipelineCompileFlagsOption);
 
     auto swapchain_option          = arg_parser.GetArgumentValue(kSwapchainOption);
     auto enable_captured_swapchain = arg_parser.IsOptionSet(kEnableUseCapturedSwapchainIndices);
@@ -543,6 +546,12 @@ std::vector<util::FeatureOptionDesc> ReplayVulkanFeature::GetOptionDescs() const
                  "calls to vkGetPipelineCacheData." },
                false,
                AliasNames(kOmitPipelineCacheDataShortOption, kOmitPipelineCacheDataLongOption) },
+             { "",
+               { "Preserve captured FAIL_ON_PIPELINE_COMPILE_REQUIRED flags instead of",
+                 "removing them. Replay can fail if the replay driver needs compilation.",
+                 "Use this to diagnose replay with the original compile-control flags." },
+               false,
+               kPreservePipelineCompileFlagsOption },
              { "<N>",
                { "Restrict rendering to the Nth surface object created. Used with captures",
                  "that include multiple surfaces. Default is -1 (render to all surfaces)." },

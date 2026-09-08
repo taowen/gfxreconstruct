@@ -216,6 +216,11 @@ class VulkanReplayConsumerBase : public VulkanConsumer
     template <typename T>
     void AllowCompileDuringPipelineCreation(uint32_t create_info_count, const T* create_infos)
     {
+        if (options_.preserve_pipeline_compile_flags)
+        {
+            return;
+        }
+
         for (uint32_t i = 0; i < create_info_count; ++i)
         {
             if (create_infos[i].flags & VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT)
@@ -2183,11 +2188,12 @@ class VulkanReplayConsumerBase : public VulkanConsumer
      *
      * @brief   RemoveFailOnCompileRequiredFlags will check and remove potential
      *          'VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT' flags from an array of
-     *          VkPipeline create-infos. Will log individual warnings for each removed flag.
+     *          VkPipeline create-infos unless preserve_pipeline_compile_flags is enabled.
+     *          Will log warnings when flags are removed.
      *
      */
     template <typename CreateInfo>
-    static void RemoveFailOnCompileRequiredFlags(CreateInfo* create_infos, uint32_t create_info_count);
+    void RemoveFailOnCompileRequiredFlags(CreateInfo* create_infos, uint32_t create_info_count);
 
   private:
     util::platform::LibraryHandle                                            loader_handle_;
