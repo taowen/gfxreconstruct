@@ -28,6 +28,8 @@
     "vkGetTensorViewOpaqueCaptureDescriptorDataARM"
   ],
   "functions-encoder": [
+    "vkCmdDrawMultiEXT",
+    "vkCmdDrawMultiIndexedEXT",
     "vkCreateComputePipelines",
     "vkCreateGraphicsPipelines",
     "vkCreateRayTracingPipelinesNV",

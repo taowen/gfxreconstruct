@@ -3274,23 +3274,6 @@ VKAPI_ATTR void VKAPI_CALL vkCmdSetColorWriteEnableEXT(
     uint32_t                                    attachmentCount,
     const VkBool32*                             pColorWriteEnables);
 
-VKAPI_ATTR void VKAPI_CALL vkCmdDrawMultiEXT(
-    VkCommandBuffer                             commandBuffer,
-    uint32_t                                    drawCount,
-    const VkMultiDrawInfoEXT*                   pVertexInfo,
-    uint32_t                                    instanceCount,
-    uint32_t                                    firstInstance,
-    uint32_t                                    stride);
-
-VKAPI_ATTR void VKAPI_CALL vkCmdDrawMultiIndexedEXT(
-    VkCommandBuffer                             commandBuffer,
-    uint32_t                                    drawCount,
-    const VkMultiDrawIndexedInfoEXT*            pIndexInfo,
-    uint32_t                                    instanceCount,
-    uint32_t                                    firstInstance,
-    uint32_t                                    stride,
-    const int32_t*                              pVertexOffset);
-
 VKAPI_ATTR VkResult VKAPI_CALL vkCreateMicromapEXT(
     VkDevice                                    device,
     const VkMicromapCreateInfoEXT*              pCreateInfo,
