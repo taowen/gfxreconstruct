@@ -2125,7 +2125,9 @@ VkResult VulkanReplayDumpResourcesBase::QueueSubmit2(std::span<const VkSubmitInf
             }
         }
 
-        if (!submit_cbs.empty())
+        // An original submission without command buffers can still wait/signal
+        // semaphores or signal the caller's fence. Preserve it when dumping.
+        if (!submit_cbs.empty() || submit_infos[si].commandBufferInfoCount == 0)
         {
             modified_submit_info.commandBufferInfoCount = static_cast<uint32_t>(submit_cbs.size());
             modified_submit_info.pCommandBufferInfos    = submit_cbs.data();
