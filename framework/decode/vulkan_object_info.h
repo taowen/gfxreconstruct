@@ -594,6 +594,7 @@ struct VulkanPipelineInfo : public VulkanObjectInfoAsync<VkPipeline>
     {
         uint32_t          stride;
         VkVertexInputRate inputRate;
+        uint32_t          divisor{ 1 };
     };
 
     struct InputAttributeDescription

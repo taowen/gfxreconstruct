@@ -2432,8 +2432,15 @@ VkResult DrawCallsDumpingContext::DumpVertexIndexBuffers(uint64_t               
                     continue;
                 }
 
+                // firstInstance is the first record; only the instance advance is divided.
+                const uint32_t instance_records = instance_count == 0 ? 0 :
+                    binding_desc.divisor == 0 ? 1 : 1 + (instance_count - 1) / binding_desc.divisor;
                 const uint32_t count =
-                    binding_desc.inputRate == VK_VERTEX_INPUT_RATE_VERTEX ? vertex_count : instance_count;
+                    binding_desc.inputRate == VK_VERTEX_INPUT_RATE_VERTEX ? vertex_count : instance_records;
+                if (count == 0)
+                {
+                    continue;
+                }
                 VkDeviceSize total_size = 0;
                 VkDeviceSize binding_stride;
 
@@ -3506,6 +3513,8 @@ void DrawCallsDumpingContext::SetVertexInput(uint32_t                           
         const VkVertexInputBindingDescription2EXT& input_binding_description = pVertexBindingDescriptions[i];
         dynamic_vertex_input_state_.vertex_input_binding_map[input_binding_description.binding].inputRate =
             input_binding_description.inputRate;
+        dynamic_vertex_input_state_.vertex_input_binding_map[input_binding_description.binding].divisor =
+            input_binding_description.divisor;
         dynamic_vertex_input_state_.vertex_input_binding_map[input_binding_description.binding].stride =
             input_binding_description.stride;
     }

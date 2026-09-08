@@ -2225,6 +2225,25 @@ void VulkanReplayDumpResourcesBase::DumpGraphicsPipelineInfos(
                 pipeline_info->vertex_input_binding_map.emplace(binding, info);
             }
 
+            // Core/KHR/EXT aliases share the divisor-state structure type.
+            auto* vertex_next = reinterpret_cast<const VkBaseInStructure*>(in_p_create_infos[i].pVertexInputState->pNext);
+            for (; vertex_next != nullptr; vertex_next = vertex_next->pNext)
+            {
+                if (vertex_next->sType == VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO)
+                {
+                    const auto* divisors = reinterpret_cast<const VkPipelineVertexInputDivisorStateCreateInfo*>(vertex_next);
+                    for (uint32_t d = 0; d < divisors->vertexBindingDivisorCount; ++d)
+                    {
+                        const auto& entry = divisors->pVertexBindingDivisors[d];
+                        auto binding = pipeline_info->vertex_input_binding_map.find(entry.binding);
+                        if (binding != pipeline_info->vertex_input_binding_map.end())
+                        {
+                            binding->second.divisor = entry.divisor;
+                        }
+                    }
+                }
+            }
+
             // Vertex attribute info
             for (uint32_t va = 0; va < in_p_create_infos[i].pVertexInputState->vertexAttributeDescriptionCount; ++va)
             {

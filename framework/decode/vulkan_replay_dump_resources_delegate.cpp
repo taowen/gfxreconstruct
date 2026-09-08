@@ -1130,6 +1130,7 @@ void DefaultVulkanDumpResourcesDelegate::GenerateOutputJsonDrawCallInfo(
                 bindings_json_entry[i]["binding"]   = binding_index;
                 bindings_json_entry[i]["stride"]    = vb_binding.stride;
                 bindings_json_entry[i]["inputRate"] = util::ToString<VkVertexInputRate>(vb_binding.inputRate);
+                bindings_json_entry[i]["divisor"]   = vb_binding.divisor;
 
                 if (!options_.dump_resources_dump_unused_vertex_bindings &&
                     !dc_params->vertex_input_state.IsVertexBindingReferenced(binding_index))
