@@ -3450,7 +3450,6 @@ void DrawCallsDumpingContext::BindVertexBuffers(uint64_t                        
         bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].buffer_info = buffer_infos[i];
         bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].offset      = pOffsets[i];
         bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].size        = 0;
-        bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].stride      = 0;
     }
 }
 
@@ -3485,11 +3484,15 @@ void DrawCallsDumpingContext::BindVertexBuffers2(uint64_t                       
         const auto binding = static_cast<uint32_t>(first_binding + i);
         bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].buffer_info = buffer_infos[i];
         bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].offset      = pOffsets[i];
-        bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].stride = pStrides != nullptr ? pStrides[i] : 0;
-        if (pSizes != nullptr)
+        // A null pStrides leaves dynamic stride state unchanged.  Keep it in
+        // the same state map used by vkCmdSetVertexInputEXT so command order
+        // determines the effective value copied into each draw snapshot.
+        if (pStrides != nullptr)
         {
-            bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].size = buffer_size;
+            bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].stride = pStrides[i];
+            dynamic_vertex_input_state_.vertex_input_binding_map[binding].stride = pStrides[i];
         }
+        bound_vertex_buffers_.bound_vertex_buffer_per_binding[binding].size = buffer_size;
     }
 }
 
@@ -3501,7 +3504,6 @@ void DrawCallsDumpingContext::SetVertexInput(uint32_t                           
     for (uint32_t i = 0; i < vertexBindingDescriptionCount; ++i)
     {
         const VkVertexInputBindingDescription2EXT& input_binding_description = pVertexBindingDescriptions[i];
-        GFXRECON_ASSERT(input_binding_description.stride != 0);
         dynamic_vertex_input_state_.vertex_input_binding_map[input_binding_description.binding].inputRate =
             input_binding_description.inputRate;
         dynamic_vertex_input_state_.vertex_input_binding_map[input_binding_description.binding].stride =
