@@ -892,6 +892,13 @@ static void CopyVertexInputStateInfo(DrawCallsDumpingContext::DrawCallParams&   
         return;
     }
 
+    // Shader-generated vertices can still use an index buffer through gl_VertexIndex.
+    if (DrawCallsDumpingContext::IsDrawCallIndexed(dc_params.type))
+    {
+        dc_params.referenced_index_buffer    = bound_index_buffer;
+        dc_params.updated_bound_index_buffer = (bound_index_buffer.buffer_info != nullptr);
+    }
+
     // Pipeline has no vertex binding and/or attribute information.
     // This can be a case of shader generated vertices, or vertex buffer is bound as a UBO
     if (bound_pipeline != nullptr &&
@@ -942,11 +949,6 @@ static void CopyVertexInputStateInfo(DrawCallsDumpingContext::DrawCallParams&   
     dc_params.referenced_vertex_buffers    = bound_vertex_buffers;
     dc_params.updated_bound_vertex_buffers = !bound_vertex_buffers.bound_vertex_buffer_per_binding.empty();
 
-    if (DrawCallsDumpingContext::IsDrawCallIndexed(dc_params.type))
-    {
-        dc_params.referenced_index_buffer    = bound_index_buffer;
-        dc_params.updated_bound_index_buffer = (bound_index_buffer.buffer_info != nullptr);
-    }
 }
 
 void DrawCallsDumpingContext::SnapshotState(DrawCallParams& dc_params)
