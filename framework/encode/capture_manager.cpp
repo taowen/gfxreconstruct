@@ -1279,6 +1279,12 @@ bool CommonCaptureManager::CreateCaptureFile(format::ApiFamilyId api_family, con
     util::filepath::GetApplicationInfo(info);
 
     capture_filename_ = util::filepath::ExpandPathVariables(info, base_filename);
+#if defined(GFXRECON_BIONIC_ENVIRONMENT)
+    // Browser GPU children inherit the same configuration. Give each native
+    // process its own stream even when they start within one timestamp tick.
+    capture_filename_ = util::filepath::InsertFilenamePostfix(
+        capture_filename_, "_" + std::to_string(util::platform::GetCurrentProcessId()), GFXRECON_FILE_EXTENSION);
+#endif
 
     if (timestamp_filename_)
     {
