@@ -24,7 +24,7 @@ out,repo=map(Path,sys.argv[1:])
 manifest={'file_format_version':'1.2.0','layer':{
     'name':'VK_LAYER_LUNARG_gfxreconstruct','type':'GLOBAL',
     'library_path':'../lib/libVkLayer_gfxreconstruct.so','api_version':'1.4.0',
-    'implementation_version':1,'description':'ARLinux Bionic Vulkan capture'}}
+    'implementation_version':'1','description':'ARLinux Bionic Vulkan capture'}}
 (out/'layer').mkdir()
 (out/'layer/VkLayer_gfxreconstruct.json').write_text(json.dumps(manifest,indent=2)+'\n')
 files={p.relative_to(out).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
