@@ -429,7 +429,7 @@ inline std::string GetEnv(const char* name)
 {
     std::string      env_value;
 
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) && !defined(GFXRECON_BIONIC_ENVIRONMENT)
     const prop_info* pi = __system_property_find(name);
 
     if (pi)

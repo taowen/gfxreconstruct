@@ -42,7 +42,7 @@ GFXRECON_BEGIN_NAMESPACE(gfxrecon)
 GFXRECON_BEGIN_NAMESPACE(encode)
 
 // clang-format off
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) && !defined(GFXRECON_BIONIC_ENVIRONMENT)
 // Android Properties
 #define GFXRECON_ENV_VAR_PREFIX "debug.gfxrecon."
 #define GFXRECON_POSTFIX LOWER
