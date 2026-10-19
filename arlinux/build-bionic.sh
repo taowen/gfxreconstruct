@@ -15,7 +15,8 @@ cmake --build "$build" --parallel "${JOBS:-4}" --target VkLayer_gfxreconstruct g
 mkdir -p "$output/lib" "$output/bin"
 cp "$build/android-layer/libVkLayer_gfxreconstruct.so" "$output/lib/"
 cp "$build/convert/gfxrecon-convert" "$build/info/gfxrecon-info" "$output/bin/"
-cp "$repo/LICENSE.txt" "$output/"
+cp "$repo/LICENSE.md" "$output/"
+cp -R "$repo/LICENSES" "$output/"
 python3 - "$output" "$repo" <<'PACKAGE'
 import hashlib,json,subprocess,sys
 from pathlib import Path
